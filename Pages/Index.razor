@@ -10,32 +10,42 @@
     {
         @foreach (var special in specials)
         {
-            <li style="background-image: url('@special.ImageUrl');">
+            <li @onclick="@(() => ShowConfigurePizzaDialog(special))" style="background-image: url('@special.ImageUrl');">
                 <div class="pizza-info">
                     <span class="title">@special.Name</span>
                         @special.Description
                     <span class="price">@special.GetFormattedBasePrice()</span>
                 </div>
             </li>
-            @* <li class="pizza-card">
-                <div class="pizza-card-image">
-                    <img src="{{ $special->image }}" alt="{{ $special->name }}">
-                </div>
-                <div class="pizza-card-content">
-                    <h2 class="pizza-card-name">{{ $special->name }}</h2>
-                    <p class="pizza-card-description">{{ $special->description }}</p>
-                    <p class="pizza-card-price">{{ $special->price }}</p>
-                </div>
-            </li> *@
         }  
     }          
 </ul>
 </div>	
+
+@if (showingConfigureDialog)
+{
+    <ConfigurePizzaDialog Pizza="configuringPizza"/>
+}
 @code {
     List<PizzaSpecial> specials = new();
+
+    Pizza configuringPizza;
+    bool showingConfigureDialog;
 
     protected override async Task OnInitializedAsync()
     {
         specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>(NavigationManager.BaseUri + "specials");
+    }
+
+    void ShowConfigurePizzaDialog(PizzaSpecial special)
+    {
+        configuringPizza = new Pizza()
+        {
+            Special = special,
+            SpecialId = special.Id,
+            Size = Pizza.DefaultSize
+        };
+
+        showingConfigureDialog = true;
     }
 }
