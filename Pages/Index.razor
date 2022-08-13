@@ -27,7 +27,10 @@
 
 @if (OrderState.ShowingConfigureDialog)
 {
-    <ConfigurePizzaDialog Pizza="OrderState.ConfiguringPizza"/>
+    <ConfigurePizzaDialog
+      Pizza="OrderState.ConfiguringPizza"
+      OnCancel="OrderState.CancelConfigurePizzaDialog"
+      OnConfirm="OrderState.ConfirmConfigurePizzaDialog" />
 }
 @code {
     List<PizzaSpecial> specials = new();
