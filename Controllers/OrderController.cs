@@ -6,11 +6,11 @@ namespace BlazingPizza;
 
 [Route("orders")]
 [ApiController]
-public class OrdersController : Controller
+public class OrderController : Controller
 {
     private readonly PizzaStoreContext _db;
 
-    public OrdersController(PizzaStoreContext db)
+    public OrderController(PizzaStoreContext db)
     {
         _db = db;
     }
@@ -27,6 +27,7 @@ public class OrdersController : Controller
         return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
     }
 
+    [HttpPost]
     public async Task<ActionResult<int>> PlaceOrder(Order order)
     {
         order.CreatedTime = DateTime.Now;
@@ -44,5 +45,22 @@ public class OrdersController : Controller
         await _db.SaveChangesAsync();
 
         return order.OrderId;
+    }
+
+    [HttpGet("{orderId}")]
+    public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(int orderId)
+    {
+        var order = await _db.Orders
+            .Where(o => o.OrderId == orderId)
+            .Include(o => o.Pizzas).ThenInclude(p => p.Special)
+            .Include(o => o.Pizzas).ThenInclude(p => p.Toppings)
+            .SingleOrDefaultAsync();
+
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        return OrderWithStatus.FromOrder(order);
     }
 }
