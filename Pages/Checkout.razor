@@ -7,7 +7,7 @@
 
 
 <div class="main">
-    <EditForm Model=Order.DeliveryAddress OnSubmit=CheckSubmission>
+    <EditForm Model=Order.DeliveryAddress OnValidSubmit=PlaceOrder OnInvalidSubmit=ShowError>
         <div class="checkout-cols">
             <div class="checkout-order-details">
                 <h4>Review order</h4>
@@ -31,6 +31,7 @@
         <button class="checkout-button btn btn-warning" disabled=@isSubmitting>
             Place order
         </button>
+        <DataAnnotationsValidator />
     </EditForm>
 </div>
 
@@ -55,10 +56,17 @@
 
     async Task PlaceOrder()
     {
+        isError = false;
+        isSubmitting = true;
         var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "orders", OrderState.Order);
         var newOrderId = await response.Content.ReadFromJsonAsync<int>();
         OrderState.ResetOrder();
         NavigationManager.NavigateTo($"myorders/{newOrderId}");
 
+    }
+
+    protected void ShowError()
+    {
+        isError = true;
     }
 }
