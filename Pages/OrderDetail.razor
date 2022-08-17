@@ -1,6 +1,7 @@
-@page "/myorders/{orderId:int}"
 @inject IJSRuntime JS
 @implements IDisposable
+
+@page "/myorders/{orderId:int}"
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
 
@@ -61,8 +62,7 @@
 
     OrderWithStatus orderWithStatus;
     bool invalidOrder = false;
-    private DotNetObjectReference<OrderDetail> objRef;
-    protected override async Task OnParametersSetAsync()
+    private DotNetObjectReference<OrderDetail> objRef;    protected override async Task OnParametersSetAsync()
     {
         try
         {
