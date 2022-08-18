@@ -10,7 +10,7 @@
         <form class="dialog-body">
             <div>
                 <label>Size:</label>
-                <input @ref="sizeRange" type="range" min="@Pizza.MinimumSize" max="@Pizza.MaximumSize" step="1" @bind="Pizza.Size"/>
+                <input @ref="sizeRange" type="range" min="@Pizza.MinimumSize" max="@Pizza.MaximumSize" step="1" @bind="Pizza.Size" @bind:event="oninput" />
                 <span class="size-label">
                     @(Pizza.Size)" (£@(Pizza.GetFormattedTotalPrice()))
                 </span>
@@ -35,12 +35,21 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Pizza.Special.Name == "Margherita Family Size")
+        if (Pizza.Special.Name == "Margherita Family Size") 
         {
             if (firstRender)
             {
-                await JS.InvokeVoidAsync("initRange", sizeRange, Pizza.Size);
+                await JS.InvokeVoidAsync("disableElement", sizeRange);
             }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Pizza.Special.Name == "Margherita Family Size")
+        {
+            Pizza.DefaultSize = 24;
+            Pizza.Size = 24;
         }
     }
 

@@ -68,7 +68,7 @@ public static class SeedData
                 Description = "Only 24\" of pure tomatoes and basil",
                 BasePrice = 12.99m,
                 ImageUrl = "img/pizzas/margherita.jpg",
-            },
+            }
         };
         db.Specials.AddRange(specials);
         db.SaveChanges();
